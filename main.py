@@ -37,55 +37,54 @@ df = df[(
 
 #drop the columns not used
 exclusions = [
-        'Identifiant de document',
-        'Reference document',
-        '1 Articles CGI',
-        '2 Articles CGI',
-        '3 Articles CGI',
-        '4 Articles CGI',
-        '5 Articles CGI',
-        'No disposition',
-        'Date mutation',
-        'Nature mutation',
-        #'Valeur fonciere',
-        'No voie',
-        'B/T/Q',
-        'Type de voie',
-        'Code voie',
-        'Voie',
-        'Code postal',
-        #'Commune',
-        #'Code departement',
-        'Code commune',
-        'Prefixe de section',
-        #'Section',
-        'No plan',
-        'No Volume',
-        '1er lot',
-        'Surface Carrez du 1er lot',
-        '2eme lot',
-        'Surface Carrez du 2eme lot',
-        '3eme lot',
-        'Surface Carrez du 3eme lot',
-        '4eme lot',
-        'Surface Carrez du 4eme lot',
-        '5eme lot',
-        'Surface Carrez du 5eme lot',
-        #'Nombre de lots',
-        'Code type local',
-        'Type local',
-        'Identifiant local',
-        #'Surface reelle bati',
-        'Nombre pieces principales',
-        'Nature culture',
-        'Nature culture speciale',
-        'Surface terrain'
-]
+    #'id_mutation',
+    #'date_mutation',
+    'numero_disposition',
+    #'nature_mutation',
+    #'valeur_fonciere',
+    'adresse_numero',
+    'adresse_suffixe',
+    'adresse_nom_voie',
+    'adresse_code_voie',
+    #'code_postal',
+    #'code_commune',
+    #'nom_commune',
+    'code_departement',
+    'ancien_code_commune',
+    'ancien_nom_commune',
+    'id_parcelle',
+    'ancien_id_parcelle',
+    'numero_volume',
+    'lot1_numero',
+    'lot1_surface_carrez',
+    'lot2_numero',
+    'lot2_surface_carrez',
+    'lot3_numero',
+    'lot3_surface_carrez',
+    'lot4_numero',
+    'lot4_surface_carrez',
+    'lot5_numero',
+    'lot5_surface_carrez',
+    #'nombre_lots',
+    #'code_type_local',
+    #'type_local',
+    #'surface_reelle_bati',
+    #'nombre_pieces_principales',
+    'code_nature_culture',
+    'nature_culture',
+    'code_nature_culture_speciale',
+    'nature_culture_speciale',
+    #'surface_terrain',
+    #'longitude',
+    #'latitude'
+ ]
 df = df.drop(columns=exclusions)
 
-#remove the lines having NaN
+#drop NaN
 df.dropna(inplace=True)
-#print(df.head())
+#drop DOM-TOM
+prefixes = ('97', '988')
+df = df[~df['code_postal'].astype(str).str.startswith(prefixes)]
 
 #dataset sanity checks
 if df.isna().any().any():
@@ -113,6 +112,7 @@ print(df.info())
 
 #standardize the data (xi-avg(X1)/stdev
 df[['Surface reelle bati']] = preprocessing.scale(df[['Surface reelle bati']])
+df[['Nombre pieces principales']] = preprocessing.scale(df[['Nombre pieces principales']])
 print(df.head())
 
 logging.info("Cleansed data written in " + output_file)
